@@ -30,10 +30,12 @@ func ExampleCall(w http.ResponseWriter, r *http.Request) {
 
     // we want to augment the response
     response := map[string]interface{}{
-        "msg": rsp.Msg,
-        "ref": time.Now().UnixNano(),
+        "errno": rsp.Msg,
+        "errmsg": time.Now().UnixNano(),
     }
 
+    // 回传数据的时候三直接发送过去的并没有设置数据格式
+    w.Header().Set("Content-Type", "application/json")
     // encode and write the response as json
     if err := json.NewEncoder(w).Encode(response); err != nil {
         http.Error(w, err.Error(), 500)

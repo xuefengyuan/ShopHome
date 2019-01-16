@@ -6,6 +6,7 @@ import (
     _ "ShopHome/HomeWeb/modules"
     "github.com/micro/go-web"
     "github.com/julienschmidt/httprouter"
+    "ShopHome/HomeWeb/handler"
 )
 
 func main() {
@@ -23,7 +24,15 @@ func main() {
 
     rou := httprouter.New()
     rou.NotFound = http.FileServer(http.Dir("html"))
-    // register html handler
+
+    // 获取地区请求
+    rou.GET("/api/v1.0/areas", handler.GetArea)
+    // 获取session
+    rou.GET("/api/v1.0/session", handler.GetSession)
+
+    // 获取首页轮播图
+    rou.GET("/api/v1.0/house/index", handler.GetIndex)
+
 
     // register call handler
     service.Handle("/", rou)

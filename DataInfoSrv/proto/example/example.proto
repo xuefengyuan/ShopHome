@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package go.micro.srv.DataInfoSrv;
+
+service Example {
+//    rpc Call(Request) returns (Response) {}
+    // 获取地区信息的服务
+    rpc GetArea (DataInfoRequest) returns (DataInfoResponse) {    }
+    // 获取首页轮播图
+    rpc GetIndex (IndexRequest) returns (IndexResponse) {    }
+
+
+}
+
+message Message {
+    string say = 1;
+}
+
+//message Request {
+//    string name = 1;
+//}
+//
+//message Response {
+//    string msg = 1;
+//}
+
+// 获取数据信息的请求
+message DataInfoRequest {
+}
+
+// 获取数据信息的响应
+message DataInfoResponse {
+    // 错误码
+    string Errno = 1;
+    // 错误信息
+    string ErrMsg = 2;
+
+    // 地区消息对象
+    message Areas {
+        // 地区ID
+        int32 Aid = 1;
+        // 地区名称
+        string Aname = 2;
+    }
+    // 返回的数据切片
+    repeated Areas Data = 3;
+}
+
+// 获取首页轮播图片的请求
+message IndexRequest {
+}
+
+// 获取首页轮播图片的响应
+message IndexResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    bytes Max = 3;
+}
+
