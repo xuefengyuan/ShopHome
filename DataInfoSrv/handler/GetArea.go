@@ -19,24 +19,35 @@ import (
 
 type Example struct{}
 
+func RedisInit() (cache.Cache, error) {
+    // 连接Redis,配置缓存参数
+    redisConf := map[string]string{
+        "key": utils.G_server_name,
+        //127.0.0.1:6379
+        "conn":  utils.G_redis_addr + ":" + utils.G_redis_port,
+        "dbNum": utils.G_redis_dbnum,
+    }
+    beego.Info(redisConf)
+
+    // 将map进行转化成为json
+    redisConfJs, _ := json.Marshal(redisConf)
+
+    // 创建redis句柄
+    bm, err := cache.NewCache("redis", string(redisConfJs))
+
+    return bm, err
+}
+
+
 // 获取地区信息服务
 func (e *Example) GetArea(ctx context.Context, req *example.DataInfoRequest, rsp *example.DataInfoResponse) error {
     beego.Info("请求地区信息 GetArea api/v1.0/areas")
     // 初始化 错误码
     rsp.Errno = utils.RECODE_OK
     rsp.ErrMsg = utils.RecodeText(rsp.Errno)
-    /*1从缓存中获取数据*/
-    // 准备连接redis信息
-    redisConf := map[string]string{
-        "key":   utils.G_server_name,
-        "conn":  utils.G_redis_addr + ":" + utils.G_redis_port,
-        "dbNum": utils.G_redis_dbnum,
-    }
-    beego.Info(redisConf)
 
-    redisConfJson,_ := json.Marshal(redisConf)
     // 创建Redis句柄
-    bm, err := cache.NewCache("redis", string(redisConfJson))
+    bm, err := RedisInit()
     if err != nil {
         beego.Info("redis连接失败",err)
         rsp.Errno = utils.RECODE_DBERR
@@ -108,8 +119,4 @@ func (e *Example) GetArea(ctx context.Context, req *example.DataInfoRequest, rsp
     return nil
 }
 
-// 获取首页轮播图
-func (e *Example) GetIndex(ctx context.Context, req *example.IndexRequest, rsp *example.IndexResponse) error {
 
-    return nil
-}

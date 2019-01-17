@@ -6,7 +6,6 @@ import (
     "net/http"
     DATAINFO "ShopHome/DataInfoSrv/proto/example"
     "github.com/julienschmidt/httprouter"
-    "ShopHome/HomeWeb/utils"
     "github.com/astaxie/beego"
     "github.com/micro/go-grpc"
     "ShopHome/HomeWeb/modules"
@@ -59,27 +58,27 @@ func GetArea(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 /* 获取首页轮播图 */
 func GetIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     beego.Info("获取首页轮播图信息 GetSession /api/v1.0/houses/index")
-    // decode the incoming request as json
-    /*var request map[string]interface{}
-    if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+
+    server := grpc.NewService()
+    server.Init()
+    // 连接服务
+    exampleClient := DATAINFO.NewExampleService("go.micro.srv.DataInfoSrv", server.Client())
+    rsp, err := exampleClient.GetIndex(context.TODO(), &DATAINFO.IndexRequest{})
+    if err != nil {
+        beego.Info("err ", err)
         http.Error(w, err.Error(), 500)
         return
     }
 
-    // call the backend service
-    exampleClient := example.NewExampleService("go.micro.srv.template", client.DefaultClient)
-    rsp, err := exampleClient.Call(context.TODO(), &example.Request{
-        Name: request["name"].(string),
-    })
-    if err != nil {
-        http.Error(w, err.Error(), 500)
-        return
-    }*/
+    data := []interface{}{}
+    json.Unmarshal(rsp.Max, &data)
 
-    // we want to augment the response
+    beego.Info("data", data)
+    //创建返回数据map
     response := map[string]interface{}{
-        "errno":  utils.RECODE_OK,
-        "errmsg": utils.RecodeText(utils.RECODE_OK),
+        "errno":  rsp.Errno,
+        "errmsg": rsp.ErrMsg,
+        "data":   data,
     }
 
     // 回传数据的时候三直接发送过去的并没有设置数据格式

@@ -3,35 +3,105 @@ syntax = "proto3";
 package go.micro.srv.HouseSrv;
 
 service Example {
-	rpc Call(Request) returns (Response) {}
-	rpc Stream(StreamingRequest) returns (stream StreamingResponse) {}
-	rpc PingPong(stream Ping) returns (stream Pong) {}
+    // 获取当前用户发布的房源信息
+    rpc GetUserHouses (UserHousesRequest) returns (UserHousesResponse) {    }
+    // 发布房源
+    rpc PostHouses (PostHousesRequest) returns (PostHousesResponse) {    }
+    // 上传房屋图片
+    rpc PostHousesImage (HousesImageRequest) returns (HousesImageResponse) {    }
+    // 获取房源详细信息
+    rpc GetHouseInfo (HouseInfoRequest) returns (HouseInfoResponse) {    }
+    // 搜索房源
+    rpc GetSearchHouses (SearchHousesRequest) returns (SearchHousesResponse) {    }
 }
 
 message Message {
-	string say = 1;
+    string say = 1;
 }
 
-message Request {
-	string name = 1;
+// 获取当前用户发布的房源信息的请求
+message UserHousesRequest {
+    string SessionId = 1;
 }
 
-message Response {
-	string msg = 1;
+// 获取当前用户发布的房源信息的响应
+message UserHousesResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 查询到的完整数据的二进制流
+    bytes Mix = 3;
 }
 
-message StreamingRequest {
-	int64 count = 1;
+// 发布房源的请求
+message PostHousesRequest {
+    string SessionId = 1;
+    bytes Max = 2;
 }
 
-message StreamingResponse {
-	int64 count = 1;
+// 发布房源响应
+message PostHousesResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 返回房屋Id
+    int64 HouseId = 3;
 }
 
-message Ping {
-	int64 stroke = 1;
+// 上传房屋图片的请求
+message HousesImageRequest {
+    string SessionId = 1;
+    // 房屋Id
+    string HouseId = 2;
+    // 图片二进制
+    bytes Image = 3;
+    // 图片大小
+    int64 FileSize = 4;
+    // 图片名称
+    string FileName = 5;
 }
 
-message Pong {
-	int64 stroke = 1;
+// 上传房屋图片的响应
+message HousesImageResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 图片Url
+    string ImgUrl = 3;
+}
+
+// 获取房源详情的请求
+message HouseInfoRequest {
+    string SessionId = 1;
+    string HouseId = 2;
+}
+
+// 获取房源详情的响应
+message HouseInfoResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    bytes HouseData = 3;
+    int64 UserId = 4;
+}
+
+// 搜索房源的请求
+message SearchHousesRequest {
+    // 区域编辑ID
+    string Aid = 1;
+    // 开始时间
+    string Sd = 2;
+    // 结束时间
+    string Ed = 3;
+    // 查询方式
+    string Sk = 4;
+    // 页码
+    string P = 5;
+}
+
+// 搜索房源的响应
+message SearchHousesResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 当前页码
+    int64 CurrentPage = 3;
+    bytes Houses = 4;
+    // 全部页码
+    int64 TotalPage = 5;
 }

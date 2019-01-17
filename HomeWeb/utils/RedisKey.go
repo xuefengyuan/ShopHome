@@ -2,6 +2,7 @@ package utils
 
 const (
     AREA_INFO_KEY = "area_info"
+    HOME_INDEX_DATA_KEY = "home_index_data"
 )
 
 func GetNameKey(sessionId string) string {
@@ -15,3 +16,4 @@ func GetUserIdKey(sessionId string) string {
 func GetMobileKey(sessionId string) string {
     return sessionId + "mobile"
 }
+
