@@ -3,35 +3,75 @@ syntax = "proto3";
 package go.micro.srv.OrderSrv;
 
 service Example {
-	rpc Call(Request) returns (Response) {}
-	rpc Stream(StreamingRequest) returns (stream StreamingResponse) {}
-	rpc PingPong(stream Ping) returns (stream Pong) {}
+    // 发布订单
+    rpc PostOrders (PostOrdersRequest) returns (PostOrdersResponse) {    }
+    // 查看房东/租客订单的
+    rpc GetUserOrder (UserOrderRequest) returns (UserOrderResponse) {    }
+    // 房东同意/拒绝订单的
+    rpc PutOrders (PutOrdersRequest) returns (PutOrdersResponse) {    }
+    // 用户评价订单
+    rpc PutComment (UserCommentRequest) returns (UserCommentResponse) {    }
 }
 
 message Message {
-	string say = 1;
+    string say = 1;
 }
 
-message Request {
-	string name = 1;
+// 发布订单的请求
+message PostOrdersRequest {
+    string SessionId = 1;
+    bytes Body = 2;
 }
 
-message Response {
-	string msg = 1;
+// 发布订单的响应
+message PostOrdersResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 返回订单id
+    int64 OrderId = 3;
 }
 
-message StreamingRequest {
-	int64 count = 1;
+// 查看房东/租客订单的请求
+message UserOrderRequest {
+    // 标识是房东还是租客可看，role=custom：租客查看，role=landlord房东查看
+    string Role = 1;
+    string SessionId = 2;
 }
 
-message StreamingResponse {
-	int64 count = 1;
+// 查看房东/租客订单的响应
+message UserOrderResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 订单信息，字节流
+    bytes Orders = 3;
 }
 
-message Ping {
-	int64 stroke = 1;
+// 房东同意/拒绝订单的请求
+message PutOrdersRequest {
+    string SessionId = 1;
+    // 订单编号
+    string OrderId = 2;
+    // 参数的合法性
+    string Action = 3;
 }
 
-message Pong {
-	int64 stroke = 1;
+// 房东同意/拒绝订单的响应
+message PutOrdersResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+}
+
+// 用户评论订单的请求
+message UserCommentRequest {
+    // 订单Id
+    string OrderId = 1;
+    // 评价内容
+    string Comment = 2;
+    string SessionId = 3;
+}
+
+// 用户评论订单的响应
+message UserCommentResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
 }
