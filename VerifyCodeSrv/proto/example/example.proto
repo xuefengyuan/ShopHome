@@ -3,35 +3,58 @@ syntax = "proto3";
 package go.micro.srv.VerifyCodeSrv;
 
 service Example {
-	rpc Call(Request) returns (Response) {}
-	rpc Stream(StreamingRequest) returns (stream StreamingResponse) {}
-	rpc PingPong(stream Ping) returns (stream Pong) {}
+    // 获取图片验证码
+    rpc GetImageCode (ImageCodeRequest) returns (ImageCodeResponse) {}
+    // 获取短信验证码
+    rpc GetSmsCode (SmsCodeRequest) returns (SmsCodeResponse) {}
+
 }
 
 message Message {
-	string say = 1;
+    string say = 1;
+}
+// 图片验证码的请求
+message ImageCodeRequest {
+    string Uuid = 1;
 }
 
-message Request {
-	string name = 1;
+// 图片验证码的响应
+message ImageCodeResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+
+    // Pix []uint8
+    // 图片的结构元素
+    bytes Pix = 3;
+    // Stride int
+    // 图片的跨度
+    int64 Stride = 4;
+
+    // 坐标
+    // 用来代替Point
+    message Point{
+        int64 x = 1;
+        int64 y = 2;
+    }
+
+    Point Min = 5;
+    Point Max = 6;
 }
 
-message Response {
-	string msg = 1;
+// 短信验证码的请求
+message SmsCodeRequest {
+    // 手机号
+    string Mobile = 1;
+    // 图片验证码的值
+    string imageCode = 2;
+    // uuid
+    string Uuid = 3;
 }
 
-message StreamingRequest {
-	int64 count = 1;
+// 短信验证码的响应
+message SmsCodeResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
 }
 
-message StreamingResponse {
-	int64 count = 1;
-}
 
-message Ping {
-	int64 stroke = 1;
-}
-
-message Pong {
-	int64 stroke = 1;
-}

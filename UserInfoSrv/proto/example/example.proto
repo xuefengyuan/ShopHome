@@ -3,35 +3,162 @@ syntax = "proto3";
 package go.micro.srv.UserInfoSrv;
 
 service Example {
-	rpc Call(Request) returns (Response) {}
-	rpc Stream(StreamingRequest) returns (stream StreamingResponse) {}
-	rpc PingPong(stream Ping) returns (stream Pong) {}
+
+    // 用户注册
+    rpc PostUserRegist (UserRegistRequest) returns (UserRegistResponse) {    }
+    // 获取Session信息
+    rpc GetSession (SessionRequest) returns (SessionResponse) {    }
+    // 用户登录
+    rpc PostUserLogin (UserLoginRequest) returns (UserLoginResponse) {    }
+    // 用户退出
+    rpc DeleteSession (DelSessionRequest) returns (DelSessionResponse) {    }
+    // 获取用户信息,检查用户实名认证
+    rpc GetUserInfo (UserInfoRequest) returns (UserInfoResponse) {    }
+    // 上传用户头像
+    rpc PostUserAvatar (UserAvatarRequest) returns(UserAvatarResponse){    }
+    // 更新用户名
+    rpc PutUserInfo (UpdateUserNameRequest) returns (UpdateUserNameResponse) {    }
+    // 更新实名认证
+    rpc PostUserAuth (UpdateUserAuthRequest) returns (UpdateUserAuthResponse) {    }
+
 }
 
 message Message {
-	string say = 1;
+    string say = 1;
 }
 
-message Request {
-	string name = 1;
+// 用户注册的请求
+message UserRegistRequest {
+    // 手机号
+    string Mobile = 1;
+    // 密码
+    string Password = 2;
+    // 短信验证码
+    string SmsCode = 3;
 }
 
-message Response {
-	string msg = 1;
+// 用户注册的响应
+message UserRegistResponse {
+    // 错误码
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 将session id返回
+    string SessionId = 3;
 }
 
-message StreamingRequest {
-	int64 count = 1;
+// 获取Session的请求
+message SessionRequest {
+    string SessionId = 1;
 }
 
-message StreamingResponse {
-	int64 count = 1;
+// 获取Session的响应
+message SessionResponse {
+    string Errno = 1;
+    string Errmsg = 2;
+    //返回用户名
+    string UserName = 3;
 }
 
-message Ping {
-	int64 stroke = 1;
+// 用户登录的请求
+message UserLoginRequest {
+    string Mobile = 1;
+    string Password = 2;
 }
 
-message Pong {
-	int64 stroke = 1;
+// 用户登录的响应
+message UserLoginResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    string SessionId = 3;
+}
+
+// 用户退出的请求
+message DelSessionRequest {
+    string SessionId = 1;
+}
+
+// 用户退出的响应
+message DelSessionResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+}
+
+// 获取用户信息的请求
+message UserInfoRequest {
+    string SessionId = 1;
+}
+
+// 获取用户信息的响应
+message UserInfoResponse {
+    // "errno": "0",
+    string Errno = 1;
+
+    // "errmsg": "成功",
+    string ErrMsg = 2;
+
+    // 用户ID: 1,
+    string UserId = 3;
+
+    // 用户名: "Panda",
+    string Name = 4;
+
+    // 用户手机号: "110",
+    string Mobile = 5;
+
+    // 真实姓名: "熊猫",
+    string RealName = 6;
+
+    // 用户身份证号码: "210112244556677",
+    string IdCard = 7;
+
+    // 用户头像:"http://101.200.170.171:9998/group1/M00/00/00/Zciqq1n7It2ANn1dAADexS5wJKs808.png"
+    string AvatarUrl = 8;
+}
+
+// 上传用户头像的请求
+message UserAvatarRequest {
+    // 图片二进制
+    bytes Avatar = 1;
+    // 用户Sessionid
+    string SessionId = 2;
+    // 文件大小
+    int64 FileSize = 3;
+    // 文件名
+    string FileName = 4;
+}
+
+// 上传用户头像的响应
+message UserAvatarResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    // 返回的头像Url
+    string AvatarUrl = 3;
+}
+
+// 更新用户名的请求
+message UpdateUserNameRequest {
+    string SessionId = 1;
+    string UserName = 2;
+}
+
+// 更新用户名的响应
+message UpdateUserNameResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
+    string UserName = 3;
+}
+
+// 更新用户实名认证的请求
+message UpdateUserAuthRequest {
+    string SessionId = 1;
+    // 真实姓名
+    string RealName = 2;
+    // 身份证号
+    string IdCard = 3;
+}
+
+// 更新用户实名认证的响应
+message UpdateUserAuthResponse {
+    string Errno = 1;
+    string ErrMsg = 2;
 }
